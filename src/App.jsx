@@ -8,11 +8,13 @@ import Signin from './Pages/Signin'
 import SignOut from './Pages/SignOut'
 import About from './Pages/About'
 import Profile from './Pages/Profile'
+import Header from './Components/Header'
 
 function App() {
 
   return (
     <>
+    <Header />
      <Routes>
        <Route path='/' element={<Home />}></Route>
        <Route path='sign-in' element={<Signin />}></Route>
