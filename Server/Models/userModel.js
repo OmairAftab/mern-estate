@@ -17,6 +17,7 @@ const userSchema=new mongoose.Schema({
     }
 
 },{timestamps: true});
+// by using timestamps: true Mongoose automatically adds two extra fields to your documents: createdAt AND updatedAt
 
 
 

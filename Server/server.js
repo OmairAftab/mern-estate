@@ -15,9 +15,23 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 
-  
+
 
 const app = express();
+app.use(express.json())
+
+
+
+
+
+
+
+import userRoutes from './Routes/userRoutes.js'
+app.use('/api/user', userRoutes)
+
+
+
+
 
 app.listen(8000, () => {
   console.log("Server running on port 8000");
