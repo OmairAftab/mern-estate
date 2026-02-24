@@ -18,17 +18,22 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 const app = express();
-app.use(express.json())
+app.use(express.json()); //used when sending json data in raw in post and put methods in postman 
 
 
 
 
 
 
-
+// IMPORT USER ROUTES
 import userRoutes from './Routes/userRoutes.js'
 app.use('/api/user', userRoutes)
 
+
+
+// IMPORT AUTHENTICATION ROUTES
+import authRouter from './Routes/authRoutes.js'
+app.use('/api/auth',authRouter)
 
 
 
