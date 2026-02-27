@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from "cors";
 dotenv.config();
 
 
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 const app = express();
+app.use(cors()); //for connecting backend and frotend
 app.use(express.json()); //used when sending json data in raw in post and put methods in postman 
 
 
