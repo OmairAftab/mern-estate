@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from "cors";
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 
@@ -19,8 +20,11 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 const app = express();
-app.use(cors()); //for connecting backend and frotend
+// Enable CORS for the frontend and allow credentials (cookies)
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true,
+}));
 app.use(express.json()); //used when sending json data in raw in post and put methods in postman 
+app.use(cookieParser());
 
 
 
