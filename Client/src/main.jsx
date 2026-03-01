@@ -7,6 +7,7 @@ import axios from 'axios'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+
 // allow axios to send and receive cookies by default
 axios.defaults.withCredentials = true
 

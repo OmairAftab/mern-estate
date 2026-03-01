@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link , useNavigate} from 'react-router-dom'
 import { toast } from 'react-toastify'
 import axios from 'axios'
-
+import OAuth from '../Components/OAuth'
 
  const Signin = () => {
   const [formData, setFormData] = useState({})
@@ -26,7 +26,9 @@ import axios from 'axios'
 
   const handleSubmit = async (e) => { 
     e.preventDefault()
+
     setLoading(true)
+
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
       const res = await axios.post(`${backendUrl}/api/auth/signin`, formData, { withCredentials: true })
@@ -82,8 +84,12 @@ import axios from 'axios'
           disabled={loading} onSubmit={handleSubmit}
           className='bg-slate-600 p-2 cursor-pointer text-white rounded-lg hover:bg-slate-500  disabled:opacity-80'
         >
-          {loading ? 'Creating...' : 'SIGN IN'}
+          {loading ? 'Loading...' : 'SIGN IN'}
         </button>
+
+
+      <OAuth />
+        
       </form>
 
 

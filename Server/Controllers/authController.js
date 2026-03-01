@@ -88,7 +88,65 @@ export const signin= async (req,res)=>{
 
 
     }catch(err){
-        res.json(err)
+        return res.status(500).json({ success: false, message: err.message || 'An error occurred' })
        
+    }
+
+}
+
+
+
+
+
+
+
+export const googleController = async(req,res)=>{
+    try{
+        const { name, email, photo } = req.body;
+
+        if (!email || !name) {
+            return res.status(400).json({ success: false, message: 'Name and email are required' });
+        }
+
+        const user = await UserModel.findOne({ email });
+
+//mean if it already exist we need to signin him
+        if(user){
+
+            const token=jwt.sign({id: user._id},process.env.JWT_SECRET);
+
+            //now we have to send this token to user in res and  we will send bby cookie
+            res.cookie('token', token, {
+               httpOnly: true,
+               secure: process.env.NODE_ENV === 'production',
+               sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+               maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+        });
+
+                return res.status(200).json({ success: true, message: 'Google sign-in successful', user });
+
+        }
+        else{ //mean user nhi exist krta bna k save krna pre ga
+
+//genearte a random password for initially saving user
+            const generatedPassword=Math.random().toString(36).slice(-8);
+            const hashedpassword=await bcrypt.hash(generatedPassword,5);
+            const newUser=new UserModel({username: name.split(" ").join("").toLowerCase(), email , password: hashedpassword, avatar: photo})  //q k req.body.nae se jo hum display name le rhe the wo kuch aesa aa rha tha jese mera M. Omair Aftab  to bs us ko hi username k liye modify kiya ab aese aaye ga momairaftab
+            await newUser.save();
+
+            const token=jwt.sign({id: newUser._id},process.env.JWT_SECRET);
+            res.cookie('token', token, {
+               httpOnly: true,
+               secure: process.env.NODE_ENV === 'production',
+               sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+               maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+        });
+
+            return res.status(200).json({ success: true, message: 'Google account created successfully', user: newUser });
+            
+        }
+    }
+    catch(err){
+        return res.status(500).json({ success: false, message: err.message || 'Internal server error' });
     }
 }
