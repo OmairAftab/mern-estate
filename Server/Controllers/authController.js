@@ -82,8 +82,10 @@ export const signin= async (req,res)=>{
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
         });
 
-       
-        return res.status(200).json({ success: true, message: "User logged in successfully" });
+        
+    //    Updated authController.js so /api/auth/signin returns user data (without password), enabling avatar display for normal sign-in too.
+        const { password: userPassword, ...userData } = user._doc;
+        return res.status(200).json({ success: true, message: "User logged in successfully", user: userData });
 
 
 
@@ -112,7 +114,6 @@ export const googleController = async(req,res)=>{
 
 //mean if it already exist we need to signin him
         if(user){
-
             const token=jwt.sign({id: user._id},process.env.JWT_SECRET);
 
             //now we have to send this token to user in res and  we will send bby cookie
@@ -123,7 +124,8 @@ export const googleController = async(req,res)=>{
                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
         });
 
-                return res.status(200).json({ success: true, message: 'Google sign-in successful', user });
+                const { password: userPassword, ...userData } = user._doc;
+                return res.status(200).json({ success: true, message: 'Google sign-in successful', user: userData });
 
         }
         else{ //mean user nhi exist krta bna k save krna pre ga
@@ -142,7 +144,8 @@ export const googleController = async(req,res)=>{
                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
         });
 
-            return res.status(200).json({ success: true, message: 'Google account created successfully', user: newUser });
+            const { password: userPassword, ...userData } = newUser._doc;
+            return res.status(200).json({ success: true, message: 'Google account created successfully', user: userData });
             
         }
     }

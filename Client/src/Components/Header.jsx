@@ -1,9 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {FaSearch} from 'react-icons/fa'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const Header = () => {
+
+  const defaultAvatar = 'https://media.istockphoto.com/id/2171382633/vector/user-profile-icon-anonymous-person-symbol-blank-avatar-graphic-vector-illustration.jpg?s=612x612&w=0&k=20&c=ZwOF6NfOR0zhYC44xOX06ryIPAUhDvAajrPsaZ6v1-w='
+
+
+// Updated Header.jsx to: read currentUser from localStorage
+  const [currentUser, setCurrentUser] = useState(null)
+  const location = useLocation()
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser')
+    setCurrentUser(storedUser ? JSON.parse(storedUser) : null)
+  }, [location.pathname])
+
+  const avatarUrl = (currentUser?.avatar || '').trim() || defaultAvatar
  
+
+
+
+
   return (
     <header className='bg-slate-300'>
 
@@ -31,7 +49,27 @@ const Header = () => {
 {/* home and about ko mobile main show nhi krana  */}
         <Link to='/'> <li className='hidden sm:inline hover:underline cursor-pointer'>Home</li> </Link> 
         <Link to='/about'>  <li className='hidden sm:inline hover:underline  cursor-pointer'>About</li> </Link> 
-        <Link to='/sign-in'> <li className=' cursor-pointer hover:underline'>Sign in</li> </Link> 
+
+{/*AGar user exist krta hai to us ka avatar show kro nhi to simple login */}
+        {currentUser ? (
+          <Link to='/profile'>
+            <img
+              className='h-7 w-7 rounded-full object-cover'
+              src={avatarUrl}
+
+              onError={(e) => {                         //adds onError fallback to default image if avatar URL fails
+                e.currentTarget.onerror = null
+                e.currentTarget.src = defaultAvatar
+              }}
+              referrerPolicy='no-referrer'          // referrerPolicy='no-referrer' (helps with some Google image URL restrictions) mean ab shi se hoga render aap ki image
+              alt='profile'
+              
+            />
+          </Link>
+        ) : (
+          <Link to='/sign-in'> <li className=' cursor-pointer hover:underline'>Sign in</li> </Link>
+        )}
+
       </ul>
 
       </div>

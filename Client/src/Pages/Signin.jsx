@@ -33,16 +33,26 @@ import OAuth from '../Components/OAuth'
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
       const res = await axios.post(`${backendUrl}/api/auth/signin`, formData, { withCredentials: true })
 
+
       if (res?.data?.success) {
+        if (res?.data?.user) {
+// Takes the user object. Converts it into string using JSON.stringify(). (because localStorage can only store strings). Saves it in browser storage with key "currentUser
+          localStorage.setItem('currentUser', JSON.stringify(res.data.user))
+        }
+
+
         toast.success(res.data.message || 'Logged in successfully')
         setFormData({})
         navigate('/')
-      } else {
+      } 
+      else {
         toast.error(res?.data?.message || 'Error! Please try again')
       }
-    } catch (err) {
+    }
+    catch (err) {
       toast.error(err.response?.data?.message || err.message || 'An error occurred')
-    } finally {
+    }
+    finally {
       setLoading(false)
     }
   }
