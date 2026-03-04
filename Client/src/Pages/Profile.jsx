@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useRef } from 'react'
 import { supabase } from "../supabase.js";
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 const Profile = () => {
@@ -16,11 +18,15 @@ const Profile = () => {
   const [fileUploadError, setFileUploadError] = useState('');
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
 
   const fileRef=useRef(null);
 
 
+
+
+//jb jb file appload kren ge mean profuile pic tb run kre ga
   useEffect(()=>{
     if(file){
       handleFileUpload(file);
@@ -29,6 +35,8 @@ const Profile = () => {
 
 
   
+
+
 
  //THIS FUNCTION WE HAVE USED IN ABOVE USEEFFECT WHICH WILL RUN WHEN FILE IS UPLOADED
   const handleFileUpload = async (file) => {
@@ -67,11 +75,84 @@ const Profile = () => {
 
 
 
+
+
+
+
+// sb inputs pe onchange pe ye wala function lga diya.. jitni value change ho gi wo upadte ho gi baqi data pichla hee rhe ga
+const handleChange=(e)=>{
+  setFormData({...formData, [e.target.id]: e.target.value})
+}
+
+// console.log(formData)
+
+
+
+
+
+
+
+
+
+// jb update wala button dbaen ge to ye wala function call kre ge
+const handleSubmit= async (e)=>{
+  e.preventDefault();
+  setUpdateSuccess(false);
+
+  if (!currentUser?._id) {
+    toast.error('Please sign in first');
+    return;
+  }
+
+  if (fileUploadError) {
+    toast.error('Please fix file upload issue before updating');
+    return;
+  }
+
+  if (!Object.keys(formData).length) {
+    toast.info('No changes to update');
+    return;
+  }
+
+  setUpdating(true);
+  try{
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const res = await axios.post(`${backendUrl}/api/user/update/${currentUser._id}`, formData, {
+        withCredentials: true,
+      });
+
+      const data = res?.data;
+
+      if(data?.success){
+        if (data?.user) {
+          localStorage.setItem('currentUser', JSON.stringify(data.user));
+        }
+        setUpdateSuccess(true);
+        setFormData((prev) => ({ ...prev, password: '' }));                //this line clears the password field in your form after the profile is updated.
+        toast.success(data?.message || 'Profile updated successfully');
+      } else {
+        toast.error(data?.message || 'Failed to update profile');
+      }
+      
+  }
+  catch(err){
+    toast.error(err.response?.data?.message || err.message || 'An error occurred while updating profile');
+  }
+  finally {
+    setUpdating(false);
+  }
+}
+
+
+
+
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
 
-      <form className='flex flex-col gap-5 max-w-lg mx-auto'>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-5 max-w-lg mx-auto'>
                                                                   {/* AGAR ZYADA FILES SELECT KRE TO FIRST WALI LO IS LIYE [0] */}
         <input type="file" ref={fileRef} hidden accept='image/*' onChange={(e)=>setFile(e.target.files[0])}/> 
 
@@ -81,15 +162,17 @@ const Profile = () => {
 
         {fileUploadError && <p className='text-sm self-center text-red-700'>{fileUploadError}</p>}
 
-        <input type="text" placeholder='username' id='username' className='bg-white p-3  rounded-lg'  />
+        <input type="text" placeholder='username'  id='username'  onChange={handleChange} defaultValue={currentUser.username}  className='bg-white p-3  rounded-lg'  />
 
-        <input type="email" placeholder='email' id='email' className='bg-white p-3  rounded-lg'  />
+        <input type="email" placeholder='email' id='email' onChange={handleChange} defaultValue={currentUser.email}  className='bg-white p-3  rounded-lg'  />
 
-        <input type="password" placeholder='password' id='password' className='bg-white p-3  rounded-lg'  />
+        <input type="password" placeholder='password' id='password' value={formData.password || ''} onChange={handleChange} className='bg-white p-3  rounded-lg'  />
 
-        <button className=' bg-slate-700 hover:bg-slate-500 text-white rounded-xl p-3' > UPDATE </button>
+        <button disabled={updating} className=' bg-slate-700 hover:bg-slate-500 text-white rounded-xl p-3 disabled:opacity-70' > {updating ? 'UPDATING...' : 'UPDATE'} </button>
 
       </form>
+
+      {updateSuccess && <p className='text-sm text-green-700 text-center mt-3'>Profile updated successfully.</p>}
 
       <div className='flex justify-between'>
         <span className='text-red-700 mt-3'> Delete Account</span>

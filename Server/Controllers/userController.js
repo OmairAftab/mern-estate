@@ -18,7 +18,7 @@ export const updateUserController = async (req,res)=>{
             }
 
             const updateduser=await userModel.findByIdAndUpdate(req.params.id, {
-                $set: updatePayload                                             //jo jo cheezen update hui hon gi un ko upadte kre ga
+                $set: updatePayload                                    //jo jo cheezen update hui hon gi un ko upadte kre ga
             },{new:true})
 
             if (!updateduser) {
