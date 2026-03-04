@@ -11,6 +11,7 @@ import Profile from './Pages/Profile'
 import Header from './Components/Header'
 import Private from './Components/Private'
 import CreateListing from './Pages/CreateListing'
+import Listing from './Pages/Listing'
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
        <Route path='sign-in' element={<Signin />}></Route>
        <Route path='sign-up' element={<SignUp />}></Route>
        <Route path='/about' element={<About />}></Route>
+       <Route path='/listing/:listingId' element={<Listing />}></Route>
       <Route  element={<Private />}>                            
             <Route path='/profile' element={<Profile />}></Route>
             <Route path='/create-listing' element={<CreateListing />}></Route>

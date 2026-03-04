@@ -7,6 +7,6 @@ export const createListing= async(req,res)=>{
         const listing=await ListingModel.create(req.body)
         return res.status(201).json(listing)
     }catch(err){
-        return res.status(500).json(err)
+        return res.status(500).json({ success: false, message: err.message || 'Failed to create listing' })
     }
 }

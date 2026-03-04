@@ -1,12 +1,15 @@
 import React from 'react'
 import { useState } from 'react'
 import { supabase } from '../supabase.js';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
 const MAX_IMAGES = 6;
 const STORAGE_BUCKET = 'mern_state_bucket';
 
 const CreateListing = () => {
+  const navigate = useNavigate();
 
     const[files,setFiles]=useState([])
 
@@ -30,7 +33,13 @@ const CreateListing = () => {
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const [error,setError] = useState(false);
+  const [loading,setLoading] = useState(false);
     
+
+
+  const storedUser = localStorage.getItem('currentUser')
+  const currentUser = storedUser ? JSON.parse(storedUser) : null
 
 
 
@@ -130,6 +139,10 @@ const CreateListing = () => {
 
 
 
+
+
+
+// jb pictures show ho ri hon gi and delete dbaen ge to ye run kre ga
   const handleRemoveImage = (index) => {
     setFormData({
       ...formData,
@@ -142,39 +155,150 @@ const CreateListing = () => {
 
 
 
+
+
+// q k values different hain to sb k hisaab se chalna pre ga q k kuch text hain kuch number kuch boolean etc etc
+  const handleChange = (e) => {
+    if (e.target.id === "sale" || e.target.id === "rent") { //aik time pe ya to hum sell ko tick kr skte hain ya to rent ko not both together
+      setFormData({
+        ...formData,
+        type: e.target.id,
+      });
+    }
+
+    if (
+      e.target.id === "parking" ||
+      e.target.id === "furnished" ||
+      e.target.id === "offer"
+    ) {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.checked,
+      });
+    }
+
+    if (
+      e.target.type === "number" ||
+      e.target.type === "text" ||
+      e.target.type === "textarea"
+    ) {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value,
+      });
+    }
+  };
+
+
+
+
+
+
+
+
+//jb hum create listing wala button dbaen ge to ye wala submit kren ge
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (!currentUser?._id) return setError('Please sign in first');
+
+      // 3. Prevent submission if there are no images or uploading is in progress
+      if (formData.imageUrls.length < 1) return setError('You must upload at least one image');
+      
+      // 4. Validate that discount price is actually a discount
+      if (+formData.regularPrice < +formData.discountPrice) return setError('Discount price must be lower than regular price');
+
+      setLoading(true);
+      setError(false);
+      
+
+
+    //   const res = await fetch('/api/listing/create', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       ...formData,
+    //       userRef: currentUser._id,
+    //     }),
+    //   });
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const res = await axios.post(
+      `${backendUrl}/api/listing/create`,
+      {
+        ...formData,
+        userRef: currentUser._id,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+      const data = res?.data;
+      setLoading(false);
+      
+      if (data.success === false) {
+        setError(data.message);
+      } else {
+        // 5. Redirect the user to their new listing page upon success
+        // Assuming your backend returns the new listing data including its generated ID
+        navigate(`/listing/${data._id}`); 
+      }
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <main className='p-3 max-w-3xl mx-auto'>
         <h1 className='text-3xl font-semibold text-center my-7'>Create Listing</h1>
 
-        <form className='flex flex-col sm:flex-row'>
+        <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row'>
             <div className='flex flex-col gap-4 flex-1'>
 
-                <input type="text" placeholder='Name' id='name' className='bg-white p-3 rounded-lg' required />
+                <input type="text" placeholder='Name' id='name' onChange={handleChange} value={formData.name} className='bg-white p-3 rounded-lg' required />
             
-                <textarea type="text" placeholder='Description' id='description'  className='bg-white p-3 rounded-lg' required />
+                <textarea type="text" placeholder='Description' onChange={handleChange} value={formData.description} id='description'  className='bg-white p-3 rounded-lg' required />
 
-                <input type="text" placeholder='Address' id='address'  className='bg-white p-3 rounded-lg' required />
+                <input type="text" placeholder='Address' id='address' onChange={handleChange} value={formData.address}  className='bg-white p-3 rounded-lg' required />
+
+
+
 
 
             <div className='flex gap-6 flex-wrap'>
                 <div className='flex gap-2'>
-                     <input type="checkbox" id='sale' className='w-5'/>
+                     <input type="checkbox" id='sale' onChange={handleChange} checked={formData.type==='sale'} className='w-5'/>
                      <span>Sell</span>
                 </div>
                 <div className='flex gap-2'>
-                     <input type="checkbox" id='rent' className='w-5'/>
+                     <input type="checkbox" id='rent' onChange={handleChange} checked={formData.type==='rent'} className='w-5'/>
                      <span>Rent</span>
                 </div>
                 <div className='flex gap-2'>
-                     <input type="checkbox" id='parking' className='w-5'/>
+                     <input type="checkbox" id='parking' onChange={handleChange} checked={formData.parking} className='w-5'/>
                      <span>Parking Spot</span>
                 </div>
                 <div className='flex gap-2'>
-                     <input type="checkbox" id='furnished' className='w-5'/>
+                     <input type="checkbox" id='furnished' onChange={handleChange} checked={formData.furnished} className='w-5'/>
                      <span>Furnished</span>
                 </div>
                 <div className='flex gap-2'>
-                     <input type="checkbox" id='offer' className='w-5'/>
+                     <input type="checkbox" id='offer' onChange={handleChange} checked={formData.offer} className='w-5'/>
                      <span>Offer</span>
                 </div>
             </div>
@@ -188,6 +312,8 @@ const CreateListing = () => {
       type="number"
       id="bedrooms"
       min="1"
+      onChange={handleChange}
+      value={formData.bedrooms}
       required
       className="p-2 w-20 border bg-white border-gray-300 rounded-lg"
     />
@@ -199,6 +325,8 @@ const CreateListing = () => {
       type="number"
       id="bathrooms"
       min="1"
+      onChange={handleChange}
+      value={formData.bathrooms}
       required
       className="p-2 w-20 border bg-white border-gray-300 rounded-lg"
     />
@@ -210,6 +338,8 @@ const CreateListing = () => {
       type="number"
       id="regularPrice"
       min="1"
+      onChange={handleChange}
+      value={formData.regularPrice}
       required
       className="p-2 w-32 border bg-white border-gray-300 rounded-lg"
     />
@@ -220,7 +350,8 @@ const CreateListing = () => {
     <input
       type="number"
       id="discountPrice"
-      min="1"
+      onChange={handleChange}
+      value={formData.discountPrice}
       required
       className="p-2 w-32 border bg-white border-gray-300 rounded-lg"
     />
@@ -277,8 +408,13 @@ const CreateListing = () => {
 
 
 
-            <button className='p-3 bg-slate-700 text-white cursor-pointer rounded-lg hover:bg-slate-500 disabled:opacity-80'> CREATE LISTING </button>
-
+            <button 
+            disabled={loading || uploading} 
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          >
+            {loading ? 'Creating...' : 'Create Listing'}
+          </button>
+          {error && <p className="text-red-700 text-sm">{error}</p>}
             </div>
 
         </form>
