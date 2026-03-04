@@ -42,6 +42,10 @@ import authRouter from './Routes/authRoutes.js'
 app.use('/api/auth',authRouter)
 
 
+// IMPORT LISTING ROUTES
+import listingRouter from './Routes/listingRoutes.js'
+app.use('/api/listing', listingRouter)
+
 
 
 app.listen(8000, () => {
