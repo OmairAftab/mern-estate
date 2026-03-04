@@ -41,6 +41,8 @@ const CreateListing = () => {
 
 
   const handleImageSubmit = () => {
+
+    // atleast 1 image and Total images (old + new) ≤ 6
     if (files.length > 0 && files.length + formData.imageUrls.length <= MAX_IMAGES) {
       const invalidFile = files.find(
         (file) => !file.type.startsWith('image/') || file.size > MAX_IMAGE_SIZE_BYTES
@@ -59,11 +61,11 @@ const CreateListing = () => {
         promises.push(storeImage(files[i]));
       }
 
-      Promise.all(promises)
+      Promise.all(promises) //Wait until ALL uploads finish
         .then((urls) => {
           setFormData({
             ...formData,
-            imageUrls: formData.imageUrls.concat(urls),
+            imageUrls: formData.imageUrls.concat(urls),  //Add them to existing imageUrls
           });
           setImageUploadError(false);
           setUploading(false);
@@ -248,7 +250,9 @@ const CreateListing = () => {
             <p className='text-red-700 text-sm'>{imageUploadError && imageUploadError}</p>
             
 
-            {/* Display uploaded images */}
+
+
+            {/* Display the uploaded images */}
            {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
               <div
