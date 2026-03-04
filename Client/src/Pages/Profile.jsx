@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { supabase } from "../supabase.js";
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link} from 'react-router-dom';
 
 
 const Profile = () => {
@@ -247,7 +247,11 @@ const handleSignOut=async()=>{
 
         <button disabled={updating} className=' bg-slate-700 hover:bg-slate-500 text-white rounded-xl p-3 disabled:opacity-70' > {updating ? 'UPDATING...' : 'UPDATE'} </button>
 
+      <Link to={'/create-listing'} className='bg-green-700 text-white p-3 rounded-xl text-center hover:bg-green-400'>
+      CREATE LISTING
+      </Link>
       </form>
+
 
       {updateSuccess && <p className='text-sm text-green-700 text-center mt-3'>Profile updated successfully.</p>}
 
