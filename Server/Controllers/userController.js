@@ -19,7 +19,9 @@ export const updateUserController = async (req,res)=>{
 
             const updateduser=await userModel.findByIdAndUpdate(req.params.id, {
                 $set: updatePayload                                    //jo jo cheezen update hui hon gi un ko upadte kre ga
-            },{new:true})
+
+            },{new:true}) //new: true save new updateduser details
+            
 
             if (!updateduser) {
                 return res.status(404).json({ success: false, message: 'User not found' })
@@ -40,3 +42,27 @@ export const updateUserController = async (req,res)=>{
         }
     
     }
+
+
+
+
+
+
+
+
+
+
+export const deleteUserController= async (req,res)=>{
+
+// req.user.id jo middleware use kiya hai "verifythetoken" routes main wahan se aarhi hai and req.params.id wo hogi jo /delete/___ yahan jo aaye gi jo test b ki hai postman pe
+    if(req.user.id!==req.params.id) return res.status(401).json("Unaunthentiacted")
+        
+    try{
+        await userModel.findByIdAndDelete(req.params.id)
+        res.status(200).json("User deleted successfuly")
+    }
+    catch(err){
+        return res.status(500).json({ success: false, message: err.message || 'Internal server error' })
+
+    }
+}

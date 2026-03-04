@@ -1,5 +1,5 @@
 import express from "express";
-import { updateUserController } from "../Controllers/userController.js";
+import { deleteUserController, updateUserController } from "../Controllers/userController.js";
 import { verifyTheToken } from "../MiddleWare/VerificationMW.js";
 
 
@@ -11,5 +11,7 @@ router.get('/test',(req,res)=>{
 
 
 router.post('/update/:id' , verifyTheToken, updateUserController)
+
+router.post('/delete/:id', verifyTheToken ,deleteUserController)
 
 export default router;

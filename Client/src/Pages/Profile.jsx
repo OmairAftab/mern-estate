@@ -3,9 +3,11 @@ import { useRef } from 'react'
 import { supabase } from "../supabase.js";
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const Profile = () => {
+  const navigate = useNavigate();
 
   const storedUser = localStorage.getItem('currentUser')
   const currentUser = storedUser ? JSON.parse(storedUser) : null
@@ -19,6 +21,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
 
   const fileRef=useRef(null);
@@ -99,10 +102,6 @@ const handleSubmit= async (e)=>{
   e.preventDefault();
   setUpdateSuccess(false);
 
-  if (!currentUser?._id) {
-    toast.error('Please sign in first');
-    return;
-  }
 
   if (fileUploadError) {
     toast.error('Please fix file upload issue before updating');
@@ -148,6 +147,42 @@ const handleSubmit= async (e)=>{
 
 
 
+
+
+
+
+
+// jb deleteUser wala dbaen ge jo red main likha a to us pe onClick pe ye functionlgaya a
+const handleDeleteUser= async () =>{
+
+  const isConfirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+  if (!isConfirmed) return;
+
+  setDeleting(true);
+  try{
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const res = await axios.post(`${backendUrl}/api/user/delete/${currentUser._id}`, {}, {
+        withCredentials: true,
+      });
+
+      const data = res?.data;
+
+      localStorage.removeItem('currentUser');
+      toast.success(data?.message || (typeof data === 'string' ? data : 'Account deleted successfully'));
+      navigate('/sign-in');
+  }
+  catch(err){
+    toast.error(err.response?.data?.message || err.message || 'Failed to delete account');
+  }
+  finally {
+    setDeleting(false);
+  }
+}
+
+
+
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
@@ -175,7 +210,7 @@ const handleSubmit= async (e)=>{
       {updateSuccess && <p className='text-sm text-green-700 text-center mt-3'>Profile updated successfully.</p>}
 
       <div className='flex justify-between'>
-        <span className='text-red-700 mt-3'> Delete Account</span>
+        <span onClick={handleDeleteUser} className='text-red-700 mt-3 cursor-pointer'> {deleting ? 'Deleting...' : 'Delete Account'}</span>
         <span className='text-red-700 mt-3'> Sign Out</span>
       </div>
     </div>
