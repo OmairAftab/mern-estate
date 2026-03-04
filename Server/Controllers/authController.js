@@ -153,3 +153,34 @@ export const googleController = async(req,res)=>{
         return res.status(500).json({ success: false, message: err.message || 'Internal server error' });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const signout= async(req,res)=>{
+    try{
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        });
+
+        return res.status(200).json({ success: true, message: 'User signed out successfully' })
+
+    }
+    catch(err){
+        return res.status(500).json({ success: false, message: err.message || 'Failed to sign out' })
+    }
+}

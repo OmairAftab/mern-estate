@@ -14,7 +14,7 @@ const Profile = () => {
 
 
   const [file,setFile] =useState(undefined)
-  console.log(file);
+  // console.log(file);
 
 
   const [fileUploadError, setFileUploadError] = useState('');
@@ -22,6 +22,7 @@ const Profile = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
 
   const fileRef=useRef(null);
@@ -183,6 +184,47 @@ const handleDeleteUser= async () =>{
 
 
 
+
+
+
+
+
+//JB SIGN OUT KREN GE TO YE FUNCTION RUN KRE GA
+const handleSignOut=async()=>{
+
+  setSigningOut(true);
+  try{
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const res = await axios.get(`${backendUrl}/api/auth/signout`, {
+      withCredentials: true,
+    });
+
+    const data = res?.data;
+    localStorage.removeItem('currentUser');
+    toast.success(data?.message || (typeof data === 'string' ? data : 'Signed out successfully'));
+    navigate('/sign-in');
+
+
+  }
+  catch(err){
+    toast.error(err.response?.data?.message || err.message || 'Failed to sign out');
+
+  }
+  finally {
+    setSigningOut(false);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
@@ -211,7 +253,7 @@ const handleDeleteUser= async () =>{
 
       <div className='flex justify-between'>
         <span onClick={handleDeleteUser} className='text-red-700 mt-3 cursor-pointer'> {deleting ? 'Deleting...' : 'Delete Account'}</span>
-        <span className='text-red-700 mt-3'> Sign Out</span>
+        <span onClick={handleSignOut} className='text-red-700 mt-3 cursor-pointer'> {signingOut ? 'Signing Out...' : 'Sign Out'}</span>
       </div>
     </div>
   )
