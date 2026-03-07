@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import userModel from '../Models/userModel.js'
+import ListingModel from '../Models/listingModel.js'
 
 
 export const updateUserController = async (req,res)=>{
@@ -64,5 +65,30 @@ export const deleteUserController= async (req,res)=>{
     catch(err){
         return res.status(500).json({ success: false, message: err.message || 'Internal server error' })
 
+    }
+}
+
+
+
+
+
+
+
+
+export const getUserListings= async(req,res)=>{
+    if (!req.user?.id) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' })
+    }
+
+    if (req.user.id !== req.params.id) {
+        return res.status(403).json({ success: false, message: 'Forbidden' })
+    }
+
+    try{
+        const listings=await ListingModel.find({userRef: req.params.id})
+        return res.status(200).json(listings)
+    }
+    catch(err){
+        return res.status(500).json({ success: false, message: err.message || 'Failed to fetch listings' })
     }
 }
