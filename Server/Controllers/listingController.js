@@ -108,3 +108,66 @@ export const getListing = async (req, res) => {
         return res.status(500).json({ success: false, message: err.message || "Failed to fetch listing" })
     }
 }
+
+
+
+
+
+
+
+
+
+
+//8:28:00
+export const getListings= async (req,res)=>{
+
+    try{
+        const limit =parseInt(req.query.limit) || 9;
+        const startIndex=parseInt(req.query.startIndex) || 0;
+
+        let offer=req.query.offer;  //jo enable krta tha discount
+
+
+
+        if(offer===undefined || offer===false){
+            offer={$in :[false,true]}                  //If the user does not specify the offer filter, the query will show all products (offer true and offer false).
+        }
+
+
+        let parking=req.query.parking;
+        
+        if(parking===undefined || parking===false){
+            parking={$in :[false,true]}                  //If the user does not specify the offer filter, the query will show all products (offer true and offer false).
+        }
+
+
+        let type=req.query.type;
+        
+        if(type===undefined || type==='all'){
+            type={$in :['sale','rent']}                  //If the user does not specify the offer filter, the query will show all products (offer true and offer false).
+        }
+
+
+        const searchTerm=req.query.searchTerm || ''; 
+        const sort=req.query.sort || 'createdAt';
+        const order=req.query.order || 'desc';
+
+
+        const listings = await ListingModel.find({
+            name: { $regex: searchTerm, $options: 'i' },     //MongoDB query to search text inside the name field. $regex means pattern search (like "contains"). if searchTerm = "phone" then It will match: iPhone, phone cover smartPhone.... 'i' means case-insensitive search. So capital or small letters don't matter.
+            offer,
+            furnished,
+            parking,
+            type,
+        })
+            .sort({ [sort]: order })
+            .limit(limit)
+            .skip(startIndex);
+
+        return res.status(200).json(listings);
+
+    }
+    catch(err){
+
+    }
+}

@@ -17,7 +17,7 @@ export default function Contact({ listing }) {
         const res = await fetch(`${backendUrl}/api/user/${listing.userRef}`);
 
         const data = await res.json();
-        
+
         setLandlord(data);
       } catch (error) {
         console.log("error ", error);
@@ -25,6 +25,10 @@ export default function Contact({ listing }) {
     };
     fetchLandLord();
   }, [listing.userRef]);
+
+
+
+
   return (
     <>
       {landlord && (
@@ -43,6 +47,8 @@ export default function Contact({ listing }) {
             placeholder="Enter your message"
             className="w-full border p-3 rouned-lg "
           ></textarea>
+
+          
           <Link 
             to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
             className="bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95"

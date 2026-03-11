@@ -1,5 +1,5 @@
 import express from "express";
-import { createListing , deleteListing, getListing, UpdateListing} from "../Controllers/listingController.js";
+import { createListing , deleteListing, getListing, getListings, UpdateListing} from "../Controllers/listingController.js";
 import { verifyTheToken } from "../MiddleWare/VerificationMW.js";
 
 
@@ -20,7 +20,9 @@ router.get('/get/:id', getListing)
 
 
 
-
 router.post('/update/:id', verifyTheToken, UpdateListing)
+
+
+router.get('/get',getListings)
 
 export default router;

@@ -42,9 +42,8 @@ export default function Listing() {
           return;
         }
         
-        // --- DEBUGGING STEP ---
-        // Open your browser console (F12) to see exactly what "beds" is named!
-        // console.log("Listing Data from DB:", data); 
+
+
         
         setListing(data);
         setLoading(false);
@@ -93,6 +92,7 @@ export default function Listing() {
               }, 2000);
             }}
           >
+
             <FaShare className='text-slate-500' />
           </div>
           {copied && (
@@ -133,28 +133,36 @@ export default function Listing() {
             
             <ul className='text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6'>
               
-              {/* --- FIX START: CHECKING ALL POSSIBLE NAMES --- */}
+
+
               <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaBed className='text-lg' />
-                {/* Checks for 'bedrooms' OR 'beds' */}
+                {/* Checks for 'bedrooms' OR  single 'bed' */}
                 {(listing.bedrooms || listing.beds) > 1
                   ? `${listing.bedrooms || listing.beds} beds `
                   : `${listing.bedrooms || listing.beds} bed `}
               </li>
+
+
+
+
               
               <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaBath className='text-lg' />
-                {/* Checks for 'bathrooms' OR 'baths' */}
+                {/* Checks for 'bathrooms' OR single 'bath' */}
                 {(listing.bathrooms || listing.baths) > 1
                   ? `${listing.bathrooms || listing.baths} baths `
                   : `${listing.bathrooms || listing.baths} bath `}
               </li>
-              {/* --- FIX END --- */}
+            
+
 
               <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaParking className='text-lg' />
                 {listing.parking ? 'Parking spot' : 'No Parking'}
               </li>
+
+              
 
               <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaChair className='text-lg' />
