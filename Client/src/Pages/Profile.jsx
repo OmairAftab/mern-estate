@@ -23,6 +23,8 @@ const Profile = () => {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [showListingError,setshowListingError]=useState(false);
+  const [userListings,setUserListings] = useState([]);
 
 
   const fileRef=useRef(null);
@@ -225,6 +227,78 @@ const handleSignOut=async()=>{
 
 
 
+
+
+
+
+
+const handleShowListings= async ()=>{
+  try{
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const res = await axios.get(`${backendUrl}/api/user/listings/${currentUser._id}`, {
+      withCredentials: true,
+    });
+
+    const data = res?.data;
+
+    if(data?.success===false){
+      setshowListingError(true)
+      return;
+    }
+
+    setUserListings(Array.isArray(data) ? data : []);
+    setshowListingError(false);
+  }
+  catch(err){
+    setshowListingError(true);
+  }
+}
+
+
+
+
+
+
+
+
+//jb listings show krvaen ge and delete and view wala button show hoga to delete wale button pe ye wala function chalaen ge hum
+const handleListingDelete= async (listingID)=>{
+  try{
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const res = await axios.delete(`${backendUrl}/api/listing/delete/${listingID}`, {
+      withCredentials: true,
+    });
+
+
+    const data = res?.data;
+
+    if(data?.success===false){
+      console.log(data.message)
+      return;
+    }
+
+
+//show every listing except the one jiski listing id    listingID(jo hum ne req main bheji hai)   us se match krti ho
+    setUserListings((prev)=>prev.filter((listing)=> listing._id !== listingID))
+
+
+  }
+  catch(err){
+    toast.error(err.message)
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
@@ -259,6 +333,35 @@ const handleSignOut=async()=>{
         <span onClick={handleDeleteUser} className='text-red-700 mt-3 cursor-pointer'> {deleting ? 'Deleting...' : 'Delete Account'}</span>
         <span onClick={handleSignOut} className='text-red-700 mt-3 cursor-pointer'> {signingOut ? 'Signing Out...' : 'Sign Out'}</span>
       </div>
+
+
+
+      <button onClick={handleShowListings} className='text-green-700 w-full cursor-pointer'> SHOW LISTINGS</button>
+
+      {userListings && userListings.length > 0 && 
+      <div className="flex flex-col gap-4">
+          <h1 className="text-center mt-7 my-7 text-2xl font-semibold">Your Listings</h1>
+
+          {userListings.map((listing)=>(
+          <div key={listing._id} className="gap-4 border rounded-lg p-3 flex justify-between items-center"> 
+              <Link to={`/listing/${listing._id}`}>
+                <img src={listing.imageUrls[0]} alt="listing cover" className="h-16 w-16 object-contain"/>
+              </Link>
+
+              <Link className="text-slate-700 font-semibold  hover:underline truncate flex-1" to={`/listing/${listing._id}`}>
+                  <p>{listing.name}</p>
+              </Link>
+
+              <div className="flex flex-col items-center">
+                <button onClick={()=>handleListingDelete(listing._id)} className="text-red-700  cursor-pointer">DELETE</button>
+
+                
+              </div>
+        </div>
+      ))}  
+    </div>}
+
+    {showListingError && <p className='text-red-700 mt-3'>Failed to load listings</p>}
     </div>
   )
 }

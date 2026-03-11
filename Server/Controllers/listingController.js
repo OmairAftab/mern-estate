@@ -21,3 +21,31 @@ export const createListing= async(req,res)=>{
         return res.status(statusCode).json({ success: false, message: err.message || 'Failed to create listing' })
     }
 }
+
+
+
+
+
+export const deleteListing= async (req,res)=>{
+    const listing= await ListingModel.findById(req.params.id);
+
+    if(!listing){
+        return res.status(404).json("Listing doesnt exist")
+    }
+
+
+//check if user is owner of listing mean us ki apni hee listing hai na
+    if(req.user.id !==listing.userRef){
+        return res.status(400).json("You can delete your own listing")
+    }
+
+
+
+    try{
+        await ListingModel.findByIdAndDelete(req.params.id)
+        return res.status(200).json("Listing deleted")
+    }
+    catch(err){
+
+    }
+}
