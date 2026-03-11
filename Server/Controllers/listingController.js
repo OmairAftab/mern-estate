@@ -49,3 +49,40 @@ export const deleteListing= async (req,res)=>{
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+export const UpdateListing= async (req,res)=>{
+    const listing=await ListingModel.findById(req.params.id);
+
+    if(!listing){
+        return res.status(404).json("Listing doesnt exist")
+    }
+
+
+    try{
+       const listingafterupdate= await ListingModel.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new:true})  //new:true make sure nayi wali jae
+
+
+        return res.status(200).json({
+            success: true,
+            message: "Listing updated successfully",
+            listing: listingafterupdate,
+        })
+        
+    }
+    catch(err){
+
+    }
+}
