@@ -2,6 +2,7 @@ import ListingModel from "../Models/listingModel.js"
 
 
 
+
 export const createListing= async(req,res)=>{
     try{
         if (!req.user?.id) {
@@ -84,5 +85,26 @@ export const UpdateListing= async (req,res)=>{
     }
     catch(err){
 
+    }
+}
+
+
+
+
+
+
+
+
+export const getListing = async (req, res) => {
+    try {
+        const listing = await ListingModel.findById(req.params.id)
+
+        if (!listing) {
+            return res.status(404).json({ success: false, message: "Listing doesnt exist" })
+        }
+
+        return res.status(200).json(listing)
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message || "Failed to fetch listing" })
     }
 }
