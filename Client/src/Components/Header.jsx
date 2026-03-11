@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {FaSearch} from 'react-icons/fa'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const Header = () => {
 
@@ -18,7 +18,31 @@ const Header = () => {
 
   const avatarUrl = (currentUser?.avatar || '').trim() || defaultAvatar
  
+  const navigate= useNavigate();
 
+  const [searchTerm, setsearchTerm] =useState('')
+
+
+
+
+    const handleSubmit=(e)=>{
+      e.preventDefault();
+      const urlParams = new URLSearchParams(window.location.search);    // Gets current URL query parameters
+      urlParams.set('searchTerm', searchTerm);          // Adds or updates the 'searchTerm' parameter in the URL
+      const searchQuery = urlParams.toString();         // Converts the parameters into a query string format
+      navigate(`/search?${searchQuery}`);               // Redirects to the search page with the updated query parameters
+    }
+
+
+
+
+    useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);           // Creates an object to read query parameters from the URL
+    const searchTermFromUrl = urlParams.get('searchTerm') || '';      // Gets the value of 'searchTerm' from URL, or empty string if it doesn't exist
+    if (searchTermFromUrl) {                                          // Checks if searchTerm exists in the URL
+      setsearchTerm(searchTermFromUrl);                               // Updates the state with the search term from the URL
+    }
+    }, [location.search]);                                              // Dependency: run this effect whenever the URL query string changes
 
 
 
@@ -37,10 +61,18 @@ const Header = () => {
 
 
   
-      <form className='bg-slate-100 p-1 rounded-lg flex justify-center items-center w-24 sm:w-64 '>
-        <input className='px-3 py-2 rounded  bg-transparent outline-none border-none' type="text" placeholder='Search...' />
+      <form onSubmit={handleSubmit} className='bg-slate-100 p-1 rounded-lg flex justify-center items-center w-24 sm:w-64 '>
+        <input 
+         onChange={(e)=> setsearchTerm(e.target.value)} 
+         className='px-3 py-2 rounded  bg-transparent outline-none border-none'
+         type="text"
+         placeholder='Search...' />
+         
+         
         {/* //REACT K ICONS KI LIBRARY INSTALL KI ( NPM I REACT-ICONS ) PHIR US KO TOP PE IMPORT KIYA AND YAHAN USE KR LIYA AS A COMPONENT FASEARCH*/}
-        <FaSearch className='text-slate-600'/> 
+        <button>
+          <FaSearch className='text-slate-600'/> 
+        </button>
       </form>
 
 
