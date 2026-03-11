@@ -98,6 +98,9 @@ useEffect(() => {
 
 
 
+
+
+
   const handleImageSubmit = () => {
 
     // atleast 1 image and Total images (old + new) ≤ 6
