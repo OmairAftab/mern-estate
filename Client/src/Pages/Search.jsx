@@ -10,6 +10,8 @@ const Search = () => {
   const [listings, setListings] = useState([]);
   const [showMore, setShowMore] = useState(false);
 
+  const[showmore,setshowmore]=useState(false)
+
 
   console.log(listings)
 
@@ -98,9 +100,12 @@ const Search = () => {
 
 
 
+
+
   useEffect(()=>{
     const fetchListings = async () => {
       setLoading(true);
+      setshowmore(false)
 
       try {
         const urlParams = new URLSearchParams(location.search);
@@ -108,6 +113,14 @@ const Search = () => {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
         const res = await fetch(`${backendUrl}/api/listing/get?${searchQuery}`);
         const data = await res.json();
+
+
+        if(data.length > 8){
+          setshowmore(true)
+        }else{
+          setshowmore(false)
+        }
+
 
         setListings(Array.isArray(data) ? data : []);
         setShowMore(Array.isArray(data) && data.length > 8);
@@ -155,6 +168,32 @@ const Search = () => {
 
   
 
+
+
+
+
+
+
+
+
+  //thisfunction will run when we click show more
+  const onShowMoreClick=async ()=>{
+    const numberoflistings= listings.length;
+    const startIndex=numberoflistings;                    //jitni listings pehle hain un se aage se ye wali new listings shuru ho gee
+    const urlParams=new URLSearchParams(location.search)
+    urlParams.set('startIndex', startIndex)               //url main yye b add krdo
+    const searchQuery=urlParams.toString();
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+        const res = await fetch(`${backendUrl}/api/listing/get?${searchQuery}`);
+        const data = await res.json();
+
+      if(data.length < 9){                            //agar 9 se kam hui remaining pictures to phir showmore dikhane ki zrurat nhi
+        setshowmore(false)
+      }
+
+      setListings([...listings, ...data])               //pehli listings wesee e rkho bs and new wali b add krdo                          
+  }
 
   
 
@@ -334,6 +373,20 @@ const Search = () => {
           {!loading && listings && listings.map((listing)=>(
             <ListingCard key={listing._id || listing.id} listing={listing} />
           ))}
+
+
+
+
+
+         
+
+         {showmore && (
+          <button className='text-green-700 hover:underline p-7 text-center w-full' 
+          onClick={onShowMoreClick}
+          >
+            Show more
+          </button>
+         )}
 
 
         </div>
