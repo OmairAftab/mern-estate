@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import ListingCard from '../Components/ListingCard';
 
 
 const Search = () => {
@@ -154,6 +155,9 @@ const Search = () => {
 
   
 
+
+  
+
   return (
 
 
@@ -291,7 +295,50 @@ const Search = () => {
       </div>
 
       <div>
-        <h1>Listing Results</h1>
+        <h1 className='text-3xl font-semibold border-b p-3 text-slate-700 mt-5'>
+          Listing Results
+        </h1>
+
+
+
+
+
+
+
+
+      {/* jb listings show krni hain mean jo cards bnae Liisting Card page pe*/}
+
+        <div className='p-7 flex flex-wrap gap-4'>
+
+
+{/* if there are no listings available based on search ya abhi kuch upload nhi hua, show a message to the user that no listings were found */}
+          {!loading  && listings.length===0 && (
+            <p className='text-slate-700 text-xl'>
+              No listing found
+            </p>
+          )}
+
+
+
+{/* If the data is currently loading from the server display a loading message */}
+          {loading && (
+            <p className='text-xl text-slate-700 text-center w-full'>
+              Loading...
+            </p>
+          )}
+
+           
+
+
+{/*   When loading is finished and listings exist, iterate through the listings array and render a ListingCard for each listing item*/}
+          {!loading && listings && listings.map((listing)=>(
+            <ListingCard key={listing._id || listing.id} listing={listing} />
+          ))}
+
+
+        </div>
+
+        
       </div>
     </div>
   )
