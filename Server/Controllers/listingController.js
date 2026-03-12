@@ -129,15 +129,28 @@ export const getListings= async (req,res)=>{
 
 
 
-        if(offer===undefined || offer===false){
+        if(offer===undefined || offer==='false'){
             offer={$in :[false,true]}                  //If the user does not specify the offer filter, the query will show all products (offer true and offer false).
+        } else {
+            offer = true
         }
 
 
         let parking=req.query.parking;
         
-        if(parking===undefined || parking===false){
+        if(parking===undefined || parking==='false'){
             parking={$in :[false,true]}                  //If the user does not specify the offer filter, the query will show all products (offer true and offer false).
+        } else {
+            parking = true
+        }
+
+
+        let furnished=req.query.furnished;
+
+        if(furnished===undefined || furnished==='false'){
+            furnished={$in :[false,true]}
+        } else {
+            furnished = true
         }
 
 
@@ -168,6 +181,6 @@ export const getListings= async (req,res)=>{
 
     }
     catch(err){
-
+        return res.status(500).json({ success: false, message: err.message || 'Failed to fetch listings' })
     }
 }

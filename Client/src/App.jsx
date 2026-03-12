@@ -13,6 +13,7 @@ import Private from './Components/Private'
 import CreateListing from './Pages/CreateListing'
 import Listing from './Pages/Listing'
 import UpdateListing from './Pages/UpdateListing'
+import Search from './Pages/Search'
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
        <Route path='sign-in' element={<Signin />}></Route>
        <Route path='sign-up' element={<SignUp />}></Route>
        <Route path='/about' element={<About />}></Route>
+       <Route path='/search' element={<Search/>}></Route>
        <Route path='/listing/:listingId' element={<Listing />}></Route>
       <Route  element={<Private />}>                            
             <Route path='/profile' element={<Profile />}></Route>
