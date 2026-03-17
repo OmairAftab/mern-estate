@@ -53,8 +53,8 @@ const Header = () => {
 
     <Link to='/'>
       <h1 className='text-3xl font-bold'>
-        <span className='text-slate-600'>Bech</span>
-        <span className='text-slate-800'>Do</span>
+        <span className='text-slate-600'>Pak</span>
+        <span className='text-slate-800'>Estate</span>
       </h1>
     </Link>
 
