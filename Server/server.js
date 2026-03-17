@@ -20,8 +20,9 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 const app = express();
+const corsOrigin = process.env.FRONTEND_URL || process.env.CLIENT_URL || true;
 // Enable CORS for the frontend and allow credentials (cookies)
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true,
+app.use(cors({ origin: corsOrigin, credentials: true,
 }));
 app.use(express.json()); //used when sending json data in raw in post and put methods in postman 
 app.use(cookieParser());
