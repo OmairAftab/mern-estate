@@ -29,6 +29,11 @@ app.use(cookieParser());
 
 
 
+app.get('/',(req,res)=>{
+    res.send("Starting...")
+})
+
+
 
 
 
@@ -41,6 +46,7 @@ app.use('/api/user', userRoutes)
 // IMPORT AUTHENTICATION ROUTES
 import authRouter from './Routes/authRoutes.js'
 app.use('/api/auth',authRouter)
+
 
 
 // IMPORT LISTING ROUTES
