@@ -70,7 +70,7 @@ export const signin= async (req,res)=>{
         }
 
 
-        //yahan agar cide pohancha mean user exist and password is correct and now we will generate token and using it user will be authenticated and logged in website
+        //yahan agar  pohancha mean user exist and password is correct and now we will generate token and using it user will be authenticated and logged in website
         const token=jwt.sign({id: user._id} , process.env.JWT_SECRET , {expiresIn: '7d'}) ///user.id jo bnti hai db main like ._id
         
 
@@ -95,6 +95,9 @@ export const signin= async (req,res)=>{
     }
 
 }
+
+
+
 
 
 

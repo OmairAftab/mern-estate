@@ -1,4 +1,5 @@
 import ListingModel from "../Models/listingModel.js"
+import mongoose from "mongoose"
 
 
 
@@ -122,6 +123,11 @@ export const getListing = async (req, res) => {
 export const getListings= async (req,res)=>{
 
     try{
+        // If MongoDB is offline, return an empty list so the homepage stays usable.
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json([])
+        }
+
         const limit =parseInt(req.query.limit) || 9;
         const startIndex=parseInt(req.query.startIndex) || 0;
 
@@ -181,6 +187,15 @@ export const getListings= async (req,res)=>{
 
     }
     catch(err){
+        const isDbConnectivityIssue =
+            err?.name === 'MongooseServerSelectionError' ||
+            err?.name === 'MongoNetworkError' ||
+            err?.message?.includes('buffering timed out')
+
+        if (isDbConnectivityIssue) {
+            return res.status(200).json([])
+        }
+
         return res.status(500).json({ success: false, message: err.message || 'Failed to fetch listings' })
     }
 }
