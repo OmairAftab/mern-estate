@@ -165,7 +165,7 @@ const Home = () => {
           <div className='flex flex-col gap-6'>
 
             <div>
-            <h2 className='text-2xl font-semibold'>Recent Places for sal</h2>
+            <h2 className='text-2xl font-semibold'>Recent Places for sale</h2>
               <Link className='text-sm text-blue-700 hover:underline' to={'/search?type=sale'}>
                 Show more places for sale
               </Link>
