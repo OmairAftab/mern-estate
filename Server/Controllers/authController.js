@@ -1,11 +1,15 @@
 import UserModel from "../Models/userModel.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import connectDB from '../db.js';
 
 
 
 // FUNCTION FOR SIGNUP
 export const signup= async (req,res)=>{
+
+    await connectDB();   //This is exactly what is needed for Vercel (serverless)
+
     const {username,email,password} =req.body;
 
     if(!username || !email || !password){
@@ -48,6 +52,9 @@ export const signup= async (req,res)=>{
 
 //FUNCTIOn FOR signin OF USERS
 export const signin= async (req,res)=>{
+
+    await connectDB();    //This is exactly what is needed for Vercel (serverless)
+
     const {email,password}=req.body;
 
     if(!email || !password){
@@ -107,6 +114,9 @@ export const signin= async (req,res)=>{
 
 export const googleController = async(req,res)=>{
     try{
+
+        await connectDB();    //This is exactly what is needed for Vercel (serverless)
+
         const { name, email, photo } = req.body;
 
         if (!email || !name) {
@@ -132,6 +142,8 @@ export const googleController = async(req,res)=>{
 
         }
         else{ //mean user nhi exist krta bna k save krna pre ga
+
+         
 
 //genearte a random password for initially saving user
             const generatedPassword=Math.random().toString(36).slice(-8);
