@@ -16,6 +16,7 @@ const Home = () => {
   const [offerListings, setOfferListings] = useState([])
   const [saleListings, setSaleListings] = useState([])
   const [rentListings, setRentListings] = useState([])
+  const [fetchError, setFetchError] = useState(null)
 
   console.log(offerListings)
 
@@ -23,18 +24,32 @@ const Home = () => {
     const fetchListings = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+        console.log('Home fetchListings backendUrl:', backendUrl)
 
         const [offerRes, rentRes, saleRes] = await Promise.all([
           axios.get(`${backendUrl}/api/listing/get?offer=true&limit=4`),
           axios.get(`${backendUrl}/api/listing/get?type=rent&limit=4`),
           axios.get(`${backendUrl}/api/listing/get?type=sale&limit=4`),
         ])
+        console.log('Home.listings responses:', {
+          offerType: typeof offerRes.data,
+          rentType: typeof rentRes.data,
+          saleType: typeof saleRes.data,
+          offerData: offerRes.data,
+        })
 
-        setOfferListings(offerRes.data)
-        setRentListings(rentRes.data)
-        setSaleListings(saleRes.data)
+        setOfferListings(Array.isArray(offerRes.data) ? offerRes.data : [])
+        setRentListings(Array.isArray(rentRes.data) ? rentRes.data : [])
+        setSaleListings(Array.isArray(saleRes.data) ? saleRes.data : [])
+
+        if (!Array.isArray(offerRes.data) || !Array.isArray(rentRes.data) || !Array.isArray(saleRes.data)) {
+          setFetchError('Unexpected API response; check the Network tab for details')
+        } else {
+          setFetchError(null)
+        }
       } catch (error) {
         console.log('Failed to load home listings:', error)
+        setFetchError(error.message || 'Failed to fetch listings')
       }
     }
 
@@ -68,6 +83,12 @@ const Home = () => {
       <Link to={'/search'} className='text-xs sm:text-sm text-blue-500 font-bold hover:underline '>
         Lets get started
       </Link>
+
+      {fetchError && (
+        <div className='mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded'>
+          {fetchError}
+        </div>
+      )}
 
     </div>
 

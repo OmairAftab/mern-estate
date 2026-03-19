@@ -72,7 +72,7 @@ export default function Listing() {
       {listing && !loading && !error && (
         <>
           <Swiper navigation modules={[Navigation]}>
-            {listing.imageUrls.map((url) => (
+            {(listing?.imageUrls || []).map((url) => (
               <SwiperSlide key={url}>
                 <div 
                   className="h-[300px] sm:h-[550px]" 
