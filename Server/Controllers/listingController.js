@@ -1,11 +1,15 @@
 import ListingModel from "../Models/listingModel.js"
 import mongoose from "mongoose"
+import connectDB from '../db.js';
 
 
 
 
 export const createListing= async(req,res)=>{
     try{
+
+        await connectDB();    //This is exactly what is needed for Vercel (serverless)
+
         if (!req.user?.id) {
             return res.status(401).json({ success: false, message: 'Unauthorized' })
         }
@@ -29,6 +33,9 @@ export const createListing= async(req,res)=>{
 
 
 export const deleteListing= async (req,res)=>{
+
+    await connectDB();    //This is exactly what is needed for Vercel (serverless)
+
     const listing= await ListingModel.findById(req.params.id);
 
     if(!listing){
@@ -63,6 +70,9 @@ export const deleteListing= async (req,res)=>{
 
 
 export const UpdateListing= async (req,res)=>{
+
+    await connectDB();    //This is exactly what is needed for Vercel (serverless)
+
     const listing=await ListingModel.findById(req.params.id);
 
     if(!listing){
@@ -97,6 +107,9 @@ export const UpdateListing= async (req,res)=>{
 
 
 export const getListing = async (req, res) => {
+
+    await connectDB();    //This is exactly what is needed for Vercel (serverless)
+
     try {
         const listing = await ListingModel.findById(req.params.id)
 
@@ -121,6 +134,8 @@ export const getListing = async (req, res) => {
 
 //8:28:00
 export const getListings= async (req,res)=>{
+
+    await connectDB();    //This is exactly what is needed for Vercel (serverless)
 
     try{
         // If MongoDB is offline, return an empty list so the homepage stays usable.
