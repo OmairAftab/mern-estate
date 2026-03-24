@@ -14,9 +14,9 @@ export const createListing= async(req,res)=>{
             return res.status(401).json({ success: false, message: 'Unauthorized' })
         }
 
-        const listingPayload = {
+
+        const listingPayload = {  //Spreads all form data from req.body..  overwrites/adds userRef with the authenticated user's ID
             ...req.body,
-            // Always bind listing ownership to the authenticated user.
             userRef: req.user.id,
         }
 
@@ -34,7 +34,9 @@ export const createListing= async(req,res)=>{
 
 export const deleteListing= async (req,res)=>{
 
-    await connectDB();    //This is exactly what is needed for Vercel (serverless)
+  
+    try{
+        await connectDB();    //This is exactly what is needed for Vercel (serverless)
 
     const listing= await ListingModel.findById(req.params.id);
 
@@ -50,12 +52,11 @@ export const deleteListing= async (req,res)=>{
 
 
 
-    try{
         await ListingModel.findByIdAndDelete(req.params.id)
         return res.status(200).json("Listing deleted")
     }
     catch(err){
-
+        return res.status(500).json({ success: false, message: err.message });
     }
 }
 

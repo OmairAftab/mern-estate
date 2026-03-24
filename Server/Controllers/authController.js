@@ -148,7 +148,7 @@ export const googleController = async(req,res)=>{
 //genearte a random password for initially saving user
             const generatedPassword=Math.random().toString(36).slice(-8);
             const hashedpassword=await bcrypt.hash(generatedPassword,5);
-            const newUser=new UserModel({username: name.split(" ").join("").toLowerCase(), email , password: hashedpassword, avatar: photo})  //q k req.body.nae se jo hum display name le rhe the wo kuch aesa aa rha tha jese mera M. Omair Aftab  to bs us ko hi username k liye modify kiya ab aese aaye ga momairaftab
+            const newUser=new UserModel({username: name.split(" ").join("").toLowerCase(), email , password: hashedpassword, avatar: photo})  //q k req.body.name se jo hum display name le rhe the wo kuch aesa aa rha tha jese mera M. Omair Aftab  to bs us ko hi username k liye modify kiya ab aese aaye ga momairaftab
             await newUser.save();
 
             const token=jwt.sign({id: newUser._id},process.env.JWT_SECRET);

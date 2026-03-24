@@ -14,8 +14,12 @@
   ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
       "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        },
         {
           "key": "Cross-Origin-Opener-Policy",
           "value": "same-origin-allow-popups"
