@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Contact({ listing }) {
   const [landlord, setLandlord] = useState(null);
@@ -12,22 +13,20 @@ export default function Contact({ listing }) {
   useEffect(() => {
     const fetchLandLord = async () => {
       try {
-
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
-        const res = await fetch(`${backendUrl}/api/user/${listing.userRef}`);
+        
+        const res = await axios.get(`${backendUrl}/api/user/${listing.userRef}`, {
+          withCredentials: true,
+        });
 
-        const data = await res.json();
+        setLandlord(res.data);
 
-        setLandlord(data);
       } catch (error) {
         console.log("error ", error);
       }
     };
     fetchLandLord();
   }, [listing.userRef]);
-
-
-
 
   return (
     <>
@@ -45,12 +44,11 @@ export default function Contact({ listing }) {
             value={message}
             onChange={onChange}
             placeholder="Enter your message"
-            className="w-full border p-3 rouned-lg "
+            className="w-full border p-3 rounded-lg"
           ></textarea>
 
-          
-          <Link 
-            to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
+          <Link
+            to={`mailto:${landlord.email}?subject=${encodeURIComponent('Regarding ' + listing.name)}&body=${encodeURIComponent(message)}`}
             className="bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95"
           >
             Send Message
