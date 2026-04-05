@@ -10,9 +10,9 @@ export const createListing= async(req,res)=>{
 
         await connectDB();    //This is exactly what is needed for Vercel (serverless)
 
-        if (!req.user?.id) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' })
-        }
+        // if (!req.user?.id) {
+        //     return res.status(401).json({ success: false, message: 'Unauthorized' })
+        // }
 
 
         const listingPayload = {  //Spreads all form data from req.body..  overwrites/adds userRef with the authenticated user's ID
