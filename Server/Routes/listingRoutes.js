@@ -6,7 +6,7 @@ import { verifyTheToken } from "../MiddleWare/VerificationMW.js";
 const router=express.Router();
 
 
-router.post('/create', verifyTheToken,createListing)
+router.post('/create',createListing)
 
 
  
