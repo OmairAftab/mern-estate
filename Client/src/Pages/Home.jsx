@@ -59,6 +59,16 @@ const Home = () => {
     fetchListings()
   }, [])
 
+
+
+  useEffect(() => {
+  if (offerListings.length > 0) {
+    console.log('First listing image:', offerListings[0]?.imageUrls?.[0])
+  }
+}, [offerListings])
+
+
+
   if (loading) {
     return (
       <div className="text-center text-xl mt-10">
@@ -84,8 +94,10 @@ const Home = () => {
           We have a wide range of properties for you to choose for.
         </div>
 
-        <Link to={'/search'} className='text-xs sm:text-sm text-blue-500 font-bold hover:underline'>
-          Lets get started
+        <Link to={'/search'} className='text-xs sm:text-sm text-white  font-bold hover:underline'>
+          <button className=' bg-slate-700 m-1 rounded-lg hover:bg-slate-600 p-5 cursor-pointer'>
+            Lets get started
+          </button>
         </Link>
       </div>
 
@@ -99,6 +111,7 @@ const Home = () => {
                 style={{
                   background: `url(${listing.imageUrls?.[0]}) center no-repeat`,
                   backgroundSize: 'cover',
+                  transform: 'translateZ(0)',   // 👈 forces GPU repaint
                 }}
               />
             </SwiperSlide>
