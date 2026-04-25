@@ -61,12 +61,6 @@ const Home = () => {
 
 
 
-  useEffect(() => {
-  if (offerListings.length > 0) {
-    console.log('First listing image:', offerListings[0]?.imageUrls?.[0])
-  }
-}, [offerListings])
-
 
 
   if (loading) {
